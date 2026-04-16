@@ -8,6 +8,9 @@ import type {
 } from "./types";
 import { RoomManager } from "./roomManager";
 
+function ts(): string {
+  return new Date().toISOString().slice(11, 23);
+}
 const VALID_MESSAGE_TYPES = new Set([
   "create-room",
   "join-room",
@@ -51,18 +54,19 @@ export class SignalingServer {
           role: null,
         };
         this.connectedClients.set(clientId, client);
-        console.log(`[CONNECT] Client ${clientId.slice(0, 8)} connected (total: ${this.connectedClients.size})`);
+        const ts = new Date().toISOString();
+        console.log(`${ts} [CONNECT] ${clientId.slice(0, 8)} (total: ${this.connectedClients.size})`);
 
         this.sendToClient(clientId, { type: "welcome", clientId });
 
         ws.on("message", (raw: Buffer | string) => {
           const rawStr = raw.toString();
-          console.log(`[MSG] From ${clientId.slice(0, 8)}: ${rawStr}`);
+          console.log(`[${ts()}] [MSG] From ${clientId.slice(0, 8)}: ${rawStr.slice(0, 100)}`);
           this.handleClientMessage(clientId, rawStr);
         });
 
         ws.on("close", () => {
-          console.log(`[DISCONNECT] Client ${clientId.slice(0, 8)} disconnected`);
+          console.log(`[${ts()}] [DISCONNECT] Client ${clientId.slice(0, 8)} disconnected`);
           this.handleClientDisconnect(clientId);
         });
       });
@@ -113,7 +117,7 @@ export class SignalingServer {
 
     switch (message.type) {
       case "create-room": {
-        console.log(`[ROOM] Client ${clientId.slice(0, 8)} creating room: ${message.roomId}`);
+        console.log(`[${ts()}] [ROOM] Client ${clientId.slice(0, 8)} creating room: ${message.roomId}`);
         const result = this.roomManager.createRoom(
           message.roomId,
           clientId,
@@ -136,8 +140,8 @@ export class SignalingServer {
       }
 
       case "join-room": {
-        console.log(`[ROOM] Client ${clientId.slice(0, 8)} joining room: ${message.roomId}`);
-        console.log(`[ROOM] Active rooms: ${Array.from(this.roomManager.getRooms().keys()).join(', ') || 'none'}`);
+        console.log(`[${ts()}] [ROOM] Client ${clientId.slice(0, 8)} joining room: ${message.roomId}`);
+        console.log(`[${ts()}] [ROOM] Active rooms: ${Array.from(this.roomManager.getRooms().keys()).join(', ') || 'none'}`);
         const result = this.roomManager.joinRoom(
           message.roomId,
           clientId,
