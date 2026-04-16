@@ -15,6 +15,7 @@ const VALID_MESSAGE_TYPES = new Set([
   "answer",
   "ice-candidate",
   "end-session",
+  "ping",
 ]);
 
 export class SignalingServer {
@@ -194,6 +195,11 @@ export class SignalingServer {
             this.roomManager.deleteRoom(client.roomId);
           }
         }
+        break;
+      }
+
+      case "ping": {
+        // Keepalive — no action needed
         break;
       }
     }
