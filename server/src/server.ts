@@ -199,7 +199,8 @@ export class SignalingServer {
       }
 
       case "ping": {
-        // Keepalive — no action needed
+        // Keepalive — log it
+        console.log(`[PING] From ${clientId.slice(0, 8)}`);
         break;
       }
     }
