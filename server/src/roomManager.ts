@@ -1,9 +1,9 @@
 import type { WebSocket } from "ws";
 import type { RoomState, ServerConfig } from "./types";
 
-const ROOM_ID_PATTERN = /^[A-Za-z0-9]{6}$/;
+const ROOM_ID_PATTERN = /^[0-9]{6}$/;
 const ALPHANUMERIC_CHARS =
-  "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+  "0123456789";
 
 export function isValidRoomId(roomId: string): boolean {
   return ROOM_ID_PATTERN.test(roomId);
